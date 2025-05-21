@@ -93,6 +93,15 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
+   * Returns a new instance of the ConversationAnalyticsRestClient, which provides access to the Conversation Analytics API.
+   *
+   * @returns {ConversationAnalyticsRestClient} A new instance of the ConversationAnalyticsRestClient.
+   */
+  get conversationAnalytics(): ConversationAnalyticsRestClient {
+    return new ConversationAnalyticsRestClient(this.options);
+  }
+
+  /**
    * Returns a new instance of the AgentLiveClient, which provides access to Deepgram's Voice Agent API.
    *
    * @returns {AgentLiveClient} A new instance of the AgentLiveClient.
@@ -100,15 +109,6 @@ export default class DeepgramClient extends AbstractClient {
    */
   public agent(endpoint: string = "/:version/agent/converse"): AgentLiveClient {
     return new AgentLiveClient(this.options, endpoint);
-  }
-
-  /**
-   * Returns a new instance of the ConversationAnalyticsRestClient, which provides access to Deepgram's Conversation Analytics API.
-   *
-   * @returns {ConversationAnalyticsRestClient} A new instance of the ConversationAnalyticsRestClient.
-   */
-  get conversationAnalytics(): ConversationAnalyticsRestClient {
-    return new ConversationAnalyticsRestClient(this.options);
   }
 
   /**
