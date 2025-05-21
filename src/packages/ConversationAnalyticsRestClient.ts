@@ -1,67 +1,75 @@
+// Deepgram Conversation Analytics REST Client
 import { AbstractRestClient } from "./AbstractRestClient";
 import type {
-  ConversationRequestUrl,
-  ConversationRequestFile,
-  ConversationAnalyticsParams,
+  AnalyzeConversationUrlRequest,
+  AnalyzeConversationFileRequest,
   ConversationResponse,
-  StreamingConversationResponse
-} from "../lib/types/ConversationAnalyticsSchema";
-import { DeepgramResponse } from "../lib/types/DeepgramResponse";
+  StreamingConversationResponse,
+} from "../lib/types";
 
-/**
- * Client for Deepgram Real-time Conversation Analytics API
- * Implements DMA-22 endpoints
- */
 export class ConversationAnalyticsRestClient extends AbstractRestClient {
   public namespace = "conversation-analytics";
 
   /**
    * Analyze an ongoing or recorded conversation (URL or file)
-   * POST /v1/analyze/conversation
+   * @param data - Either a URL request or File request
+   * @param options - Optional query parameters (overrides fields in data)
    */
   async analyzeConversation(
-    source: ConversationRequestUrl | ConversationRequestFile,
-    params?: ConversationAnalyticsParams
-  ): Promise<DeepgramResponse<ConversationResponse>> {
+    data: AnalyzeConversationUrlRequest | AnalyzeConversationFileRequest,
+    options?: Partial<AnalyzeConversationUrlRequest | AnalyzeConversationFileRequest>
+  ): Promise<ConversationResponse> {
+    let endpoint = "/v1/analyze/conversation";
+    let headers: Record<string, string> = {};
     let body: any;
-    let contentType: string;
-    if (typeof source === "object" && "url" in source) {
-      body = JSON.stringify(source);
-      contentType = "application/json";
+    let isFile = false;
+
+    if ("url" in data) {
+      body = JSON.stringify({ url: data.url });
+      headers["Content-Type"] = "application/json";
+    } else if ("file" in data) {
+      body = (data as AnalyzeConversationFileRequest).file;
+      headers["Content-Type"] = "audio/*";
+      isFile = true;
     } else {
-      body = source;
-      contentType = "audio/*";
+      throw new Error("Invalid request: must provide url or file");
     }
-    const endpoint = "/v1/analyze/conversation";
-    const url = this.getRequestUrl(endpoint, {}, params || {});
-    const result = await this.post(url, body, { headers: { "Content-Type": contentType } }).then(r => r.json());
-    return { result, error: null };
+
+    // Collect query params
+    const params = { ...data, ...options };
+    delete params["url"];
+    delete params["file"];
+    const requestUrl = this.getRequestUrl(endpoint, {}, params);
+    const result = await this.post(requestUrl, body, { headers });
+    return result.json();
   }
 
   /**
    * Analyze a conversation in real-time streaming mode
-   * POST /v1/analyze/conversation/stream
+   * @param audioChunk - The audio chunk (binary)
+   * @param options - Query parameters
    */
   async streamConversationAnalysis(
-    audioChunk: ConversationRequestFile,
-    params?: ConversationAnalyticsParams
-  ): Promise<DeepgramResponse<StreamingConversationResponse>> {
+    audioChunk: ArrayBuffer | Buffer | Blob | Uint8Array,
+    options?: Partial<AnalyzeConversationFileRequest>
+  ): Promise<StreamingConversationResponse> {
     const endpoint = "/v1/analyze/conversation/stream";
-    const url = this.getRequestUrl(endpoint, {}, params || {});
-    const result = await this.post(url, audioChunk, { headers: { "Content-Type": "audio/*" } }).then(r => r.json());
-    return { result, error: null };
+    const headers = { "Content-Type": "audio/*" };
+    const requestUrl = this.getRequestUrl(endpoint, {}, options);
+    const result = await this.post(requestUrl, audioChunk, { headers });
+    return result.json();
   }
 
   /**
    * Retrieve analysis for a specific conversation
-   * GET /v1/analyze/conversation/{conversation_id}
+   * @param conversation_id - The conversation UUID
    */
   async getConversationAnalysis(
-    conversationId: string
-  ): Promise<DeepgramResponse<ConversationResponse>> {
-    const endpoint = `/v1/analyze/conversation/${conversationId}`;
-    const url = this.getRequestUrl(endpoint);
-    const result = await this.get(url).then(r => r.json());
-    return { result, error: null };
+    conversation_id: string
+  ): Promise<ConversationResponse> {
+    const endpoint = `/v1/analyze/conversation/${conversation_id}`;
+    const requestUrl = this.getRequestUrl(endpoint);
+    const result = await this.get(requestUrl);
+    return result.json();
   }
 }
