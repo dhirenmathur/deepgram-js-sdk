@@ -1,69 +1,37 @@
-# Examples for Testing Features Locally
+# Examples
 
-The example projects are meant to be used to test features locally by contributors working on this SDK. In the `examples/precorded/package.json` file, you can see that the deepgram package used is the local version:
+This directory contains example scripts demonstrating how to use the Deepgram JavaScript SDK and integrate with various APIs and webhooks.
 
-```json
-"dependencies": {
-    "@deepgram/sdk": "file:../../"
-  }
-```
+## List of Examples
 
-This tells the example prerecorded project to use the local files within this project, not an installed package from npm.
+- **node-linear-comment-created/**: Example Express server to handle Linear's "comment created" webhook event. See details below.
+- node-agent-live/
+- node-auth/
+- node-live/
+- node-prerecorded/
+- node-read/
+- node-speak/
+- node-speak-live/
+- browser-live/
+- browser-prerecorded/
+- disabled_deno-prerecorded/
 
-## Steps to Test Your Code
+## node-linear-comment-created
 
-If you are contributing changes to this SDK, you can test those changes by using the `prerecorded` or `streaming` projects in the `examples` folder. Here are the steps to follow:
+Demonstrates how to listen for Linear's "comment created" webhook event and process the payload.
 
-### Add Your Code
+**How to use:**
 
-Make your changes to the SDK (be sure you are on a branch you have created to do this work).
+1. Install dependencies (if not already):
+   ```bash
+   npm install express body-parser
+   ```
+2. Start the server:
+   ```bash
+   node examples/node-linear-comment-created/index.js
+   ```
+3. In Linear, set your webhook URL to `http://<your-public-url>/webhook/linear` (use [ngrok](https://ngrok.com/) or similar for local testing).
+4. When a comment is created in Linear, the endpoint will log the comment details.
 
-### Install dependencies for the Deepgram project
-
-In the **root** folder of this SDK, install the dependencies:
-
-```bash
-npm i
-```
-
-### Build the Deepgram project
-
-In the **root** folder of this SDK, build the project:
-
-```bash
-npm run build
-```
-
-### Change directories
-
-Move into the `examples` project directory for either the `prerecorded` or the `streaming` example projects:
-
-```bash
-cd examples/prerecorded
-```
-
-### Install dependencies for the example project
-
-Run the following command to install the example project dependencies:
-
-```bash
-npm i
-```
-
-### Edit the API key, the file, and the mimetype (as needed)
-
-Replace the API key where it says 'YOUR_DEEPGRAM_API_KEY'
-
-```js
-const deepgramApiKey = "YOUR_DEEPGRAM_API_KEY";
-const file = "YOUR_FILE_LOCATION";
-const mimetype = "YOUR_FILE_MIME_TYPE";
-```
-
-### Run the project
-
-Make sure you're in the directory with the `index.js` file and run the project with the following command.
-
-```bash
-npm run test
-```
+**Webhook payload reference:**
+See [Linear Webhook Payload Docs](https://linear.app/developers/webhooks#webhook-payload)
