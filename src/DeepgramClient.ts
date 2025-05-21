@@ -3,6 +3,7 @@ import {
   AbstractClient,
   AgentLiveClient,
   AuthRestClient,
+  ConversationClient,
   ListenClient,
   ManageClient,
   ReadClient,
@@ -13,7 +14,7 @@ import {
 } from "./packages";
 
 /**
- * The DeepgramClient class provides access to various Deepgram API clients, including ListenClient, ManageClient, SelfHostedRestClient, ReadClient, and SpeakClient.
+ * The DeepgramClient class provides access to various Deepgram API clients, including ListenClient, ManageClient, SelfHostedRestClient, ReadClient, SpeakClient, and ConversationClient.
  *
  * @see https://github.com/deepgram/deepgram-js-sdk
  */
@@ -89,6 +90,16 @@ export default class DeepgramClient extends AbstractClient {
    */
   get speak(): SpeakClient {
     return new SpeakClient(this.options);
+  }
+
+  /**
+   * Returns a new instance of the ConversationClient, which provides access to the Deepgram API's conversation analytics functionality.
+   *
+   * @returns {ConversationClient} A new instance of the ConversationClient.
+   * @beta
+   */
+  get conversation(): ConversationClient {
+    return new ConversationClient(this.options);
   }
 
   /**
