@@ -1,67 +1,65 @@
+// Deepgram Real-time Conversation Analytics API Client
 import { AbstractRestClient } from "./AbstractRestClient";
-import type {
+import {
   ConversationRequestUrl,
-  ConversationAnalyticsSchema,
+  ConversationRequestFile,
   ConversationResponse,
   StreamingConversationResponse,
-} from "../lib/types";
+} from "../lib/types/ConversationAnalyticsSchema";
 
-/**
- * REST client for Deepgram Real-time Conversation Analytics API
- */
 export class ConversationAnalyticsRestClient extends AbstractRestClient {
-  public namespace: string = "conversationanalytics";
+  public namespace: string = "analyze/conversation";
 
   /**
-   * Analyze an ongoing or recorded conversation (URL or file)
-   * @param source ConversationRequestUrl or File (binary)
-   * @param options Query parameters for analysis
+   * Analyze an ongoing or recorded conversation (sync or async)
+   * @param data - ConversationRequestUrl or audio file (binary)
+   * @param params - Query parameters for analysis
+   * @returns ConversationResponse
    */
   async analyzeConversation(
-    source: ConversationRequestUrl | Blob | Buffer | ArrayBuffer | Uint8Array,
-    options?: ConversationAnalyticsSchema,
-    endpoint = "/v1/analyze/conversation"
+    data: ConversationRequestUrl | ConversationRequestFile,
+    params?: Record<string, any>
   ): Promise<ConversationResponse> {
     let body: any;
     let headers: Record<string, string> = {};
-    if (typeof source === "object" && "url" in source) {
-      body = JSON.stringify(source);
-      headers["Content-Type"] = "application/json";
+    let contentType = "application/json";
+    if (typeof data === "object" && "url" in data) {
+      body = JSON.stringify(data);
+      contentType = "application/json";
     } else {
-      body = source as Blob | Buffer | ArrayBuffer | Uint8Array;
-      headers["Content-Type"] = "audio/*";
+      body = data;
+      contentType = "audio/*";
     }
-    const requestUrl = this.getRequestUrl(endpoint, {}, options);
-    const result = await this.post(requestUrl, body, { headers }).then((r) => r.json());
-    return result;
+    const url = this.getRequestUrl("/v1/analyze/conversation", params);
+    const response = await this.post(url, body, { headers: { "Content-Type": contentType } });
+    return response.json();
   }
 
   /**
    * Analyze a conversation in real-time streaming mode
-   * @param audioChunk Audio chunk (binary)
-   * @param options Query parameters for streaming analysis
+   * @param audioChunk - Binary audio chunk
+   * @param params - Query parameters for streaming analysis
+   * @returns StreamingConversationResponse
    */
   async streamConversationAnalysis(
-    audioChunk: Blob | Buffer | ArrayBuffer | Uint8Array,
-    options?: ConversationAnalyticsSchema,
-    endpoint = "/v1/analyze/conversation/stream"
+    audioChunk: ConversationRequestFile,
+    params?: Record<string, any>
   ): Promise<StreamingConversationResponse> {
-    const requestUrl = this.getRequestUrl(endpoint, {}, options);
-    const headers = { "Content-Type": "audio/*" };
-    const result = await this.post(requestUrl, audioChunk, { headers }).then((r) => r.json());
-    return result;
+    const url = this.getRequestUrl("/v1/analyze/conversation/stream", params);
+    const response = await this.post(url, audioChunk, { headers: { "Content-Type": "audio/*" } });
+    return response.json();
   }
 
   /**
    * Retrieve analysis for a specific conversation
-   * @param conversation_id Conversation UUID
+   * @param conversation_id - Conversation UUID
+   * @returns ConversationResponse
    */
   async getConversationAnalysis(
-    conversation_id: string,
-    endpoint = "/v1/analyze/conversation/:conversation_id"
+    conversation_id: string
   ): Promise<ConversationResponse> {
-    const requestUrl = this.getRequestUrl(endpoint, { conversation_id });
-    const result = await this.get(requestUrl).then((r) => r.json());
-    return result;
+    const url = this.getRequestUrl(`/v1/analyze/conversation/${conversation_id}`);
+    const response = await this.get(url);
+    return response.json();
   }
 }
