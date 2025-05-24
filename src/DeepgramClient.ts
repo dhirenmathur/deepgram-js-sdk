@@ -10,8 +10,8 @@ import {
   SelfHostedRestClient,
   SpeakClient,
   ModelsRestClient,
+  ConversationAnalyticsRestClient,
 } from "./packages";
-import { ConversationAnalyticsRestClient } from "./packages/ConversationAnalyticsRestClient";
 
 /**
  * The DeepgramClient class provides access to various Deepgram API clients, including ListenClient, ManageClient, SelfHostedRestClient, ReadClient, and SpeakClient.
@@ -56,15 +56,6 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
-   * Returns a new instance of the ConversationAnalyticsRestClient, which provides access to the Conversation Analytics API.
-   *
-   * @returns {ConversationAnalyticsRestClient} A new instance of the ConversationAnalyticsRestClient.
-   */
-  get conversationAnalytics(): ConversationAnalyticsRestClient {
-    return new ConversationAnalyticsRestClient(this.options);
-  }
-
-  /**
    * Returns a new instance of the SelfHostedRestClient, which provides access to the Deepgram API's self-hosted functionality.
    *
    * @returns {OnPremClient} A new instance of the SelfHostedRestClient named as OnPremClient.
@@ -99,6 +90,15 @@ export default class DeepgramClient extends AbstractClient {
    */
   get speak(): SpeakClient {
     return new SpeakClient(this.options);
+  }
+
+  /**
+   * Returns a new instance of the ConversationAnalyticsRestClient.
+   *
+   * @returns {ConversationAnalyticsRestClient} A new instance of the ConversationAnalyticsRestClient.
+   */
+  get conversationAnalytics(): ConversationAnalyticsRestClient {
+    return new ConversationAnalyticsRestClient(this.options);
   }
 
   /**
