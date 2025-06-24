@@ -42,3 +42,14 @@ export * from "./UpdateProjectMemberScopeSchema";
 export * from "./UpdateProjectSchema";
 export * from "./UtteranceEndEvent";
 export * from "./VoidResponse";
+// Conversation Analytics API Types
+export * from "./ConversationRequestUrl";
+export * from "./ConversationRequestFile";
+export * from "./ConversationMetadata";
+export * from "./SpeakerAnalysis";
+export * from "./ActionItem";
+export * from "./ConversationDynamics";
+export * from "./ConversationResults";
+export * from "./ConversationResponse";
+export * from "./StreamingEvent";
+export * from "./StreamingConversationResponse";
