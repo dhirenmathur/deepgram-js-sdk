@@ -10,7 +10,7 @@ import {
   SelfHostedRestClient,
   SpeakClient,
   ModelsRestClient,
-  ConversationAnalyticsRestClient
+  ConversationAnalyticsRestClient,
 } from "./packages";
 
 /**
@@ -103,7 +103,7 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
-   * Returns a new instance of the ConversationAnalyticsRestClient, which provides access to the Conversation Analytics API.
+   * Returns a new instance of the ConversationAnalyticsRestClient.
    */
   get conversationAnalytics(): ConversationAnalyticsRestClient {
     return new ConversationAnalyticsRestClient(this.options);
