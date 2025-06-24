@@ -104,6 +104,8 @@ export default class DeepgramClient extends AbstractClient {
 
   /**
    * Returns a new instance of the ConversationAnalyticsRestClient.
+   *
+   * @returns {ConversationAnalyticsRestClient}
    */
   get conversationAnalytics(): ConversationAnalyticsRestClient {
     return new ConversationAnalyticsRestClient(this.options);
