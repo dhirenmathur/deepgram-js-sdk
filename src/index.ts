@@ -54,6 +54,8 @@ export * from "./lib/enums";
 export * from "./lib/constants";
 export * from "./lib/errors";
 export * from "./lib/helpers";
+export * from "./packages/ConversationAnalyticsRestClient";
+export * from "./lib/types/ConversationAnalyticsSchema";
 
 /**
  * Captions. These will be tree-shaken if unused.
