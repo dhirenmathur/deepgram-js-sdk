@@ -1,7 +1,4 @@
-/*
- * ConversationAnalyticsResponse.ts
- * Types for Deepgram Real-time Conversation Analytics API responses
- */
+// ConversationAnalyticsResponse.ts
 
 export interface ConversationMetadata {
   request_id: string;
@@ -11,8 +8,6 @@ export interface ConversationMetadata {
   channels: number;
   num_speakers: number;
   language: string;
-  models?: string[];
-  model_info?: Record<string, { name: string; version: string }>;
 }
 
 export interface SpeakerAnalysis {
@@ -109,7 +104,7 @@ export interface StreamingEvent {
   event_type: string;
   timestamp: number;
   speaker_id?: number;
-  data?: Record<string, any>;
+  data?: object;
 }
 
 export interface StreamingConversationResponse {
