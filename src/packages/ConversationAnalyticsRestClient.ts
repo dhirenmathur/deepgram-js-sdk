@@ -1,4 +1,5 @@
-// Deepgram Real-time Conversation Analytics API Client
+// src/packages/ConversationAnalyticsRestClient.ts
+
 import { AbstractRestClient } from "./AbstractRestClient";
 import {
   ConversationRequestUrl,
@@ -6,60 +7,58 @@ import {
   ConversationResponse,
   StreamingConversationResponse,
 } from "../lib/types/ConversationAnalyticsSchema";
+import { DeepgramResponse } from "../lib/types/DeepgramResponse";
 
 export class ConversationAnalyticsRestClient extends AbstractRestClient {
-  public namespace: string = "analyze/conversation";
+  public namespace = "conversation_analytics";
 
   /**
-   * Analyze an ongoing or recorded conversation (sync or async)
-   * @param data - ConversationRequestUrl or audio file (binary)
-   * @param params - Query parameters for analysis
-   * @returns ConversationResponse
+   * Analyze an ongoing or recorded conversation (JSON or audio file).
    */
   async analyzeConversation(
-    data: ConversationRequestUrl | ConversationRequestFile,
-    params?: Record<string, any>
-  ): Promise<ConversationResponse> {
+    source: ConversationRequestUrl | ConversationRequestFile,
+    options?: Record<string, any>
+  ): Promise<DeepgramResponse<ConversationResponse>> {
+    let endpoint = "/v1/analyze/conversation";
     let body: any;
     let headers: Record<string, string> = {};
-    let contentType = "application/json";
-    if (typeof data === "object" && "url" in data) {
-      body = JSON.stringify(data);
-      contentType = "application/json";
+
+    if (typeof source === "object" && "url" in source) {
+      body = JSON.stringify(source);
+      headers["Content-Type"] = "application/json";
     } else {
-      body = data;
-      contentType = "audio/*";
+      body = source;
+      headers["Content-Type"] = "audio/*";
     }
-    const url = this.getRequestUrl("/v1/analyze/conversation", params);
-    const response = await this.post(url, body, { headers: { "Content-Type": contentType } });
-    return response.json();
+
+    const requestUrl = this.getRequestUrl(endpoint, {}, options || {});
+    const result: ConversationResponse = await this.post(requestUrl, body, { headers }).then((r) => r.json());
+    return { result, error: null };
   }
 
   /**
-   * Analyze a conversation in real-time streaming mode
-   * @param audioChunk - Binary audio chunk
-   * @param params - Query parameters for streaming analysis
-   * @returns StreamingConversationResponse
+   * Analyze a conversation in real-time streaming mode.
    */
   async streamConversationAnalysis(
-    audioChunk: ConversationRequestFile,
-    params?: Record<string, any>
-  ): Promise<StreamingConversationResponse> {
-    const url = this.getRequestUrl("/v1/analyze/conversation/stream", params);
-    const response = await this.post(url, audioChunk, { headers: { "Content-Type": "audio/*" } });
-    return response.json();
+    audioChunk: ArrayBuffer | Buffer | Blob,
+    options?: Record<string, any>
+  ): Promise<DeepgramResponse<StreamingConversationResponse>> {
+    const endpoint = "/v1/analyze/conversation/stream";
+    const headers = { "Content-Type": "audio/*" };
+    const requestUrl = this.getRequestUrl(endpoint, {}, options || {});
+    const result: StreamingConversationResponse = await this.post(requestUrl, audioChunk, { headers }).then((r) => r.json());
+    return { result, error: null };
   }
 
   /**
-   * Retrieve analysis for a specific conversation
-   * @param conversation_id - Conversation UUID
-   * @returns ConversationResponse
+   * Retrieve analysis for a specific conversation.
    */
   async getConversationAnalysis(
     conversation_id: string
-  ): Promise<ConversationResponse> {
-    const url = this.getRequestUrl(`/v1/analyze/conversation/${conversation_id}`);
-    const response = await this.get(url);
-    return response.json();
+  ): Promise<DeepgramResponse<ConversationResponse>> {
+    const endpoint = `/v1/analyze/conversation/${conversation_id}`;
+    const requestUrl = this.getRequestUrl(endpoint);
+    const result: ConversationResponse = await this.get(requestUrl).then((r) => r.json());
+    return { result, error: null };
   }
 }
