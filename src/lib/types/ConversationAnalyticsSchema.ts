@@ -1,10 +1,10 @@
-// Deepgram Real-time Conversation Analytics API Schema Types
+// src/lib/types/ConversationAnalyticsSchema.ts
 
 export interface ConversationRequestUrl {
   url: string;
 }
 
-export type ConversationRequestFile = ArrayBuffer | Blob | Buffer;
+export type ConversationRequestFile = ArrayBuffer | Buffer | Blob;
 
 export interface ConversationMetadata {
   request_id: string;
@@ -32,7 +32,11 @@ export interface SpeakerAnalysis {
   sentiment?: {
     average?: string;
     score?: number;
-    progression?: Array<{ time: number; sentiment: string; score: number }>;
+    progression?: Array<{
+      time: number;
+      sentiment: string;
+      score: number;
+    }>;
   };
   longest_monologue?: number;
   average_response_time?: number;
@@ -56,7 +60,7 @@ export interface ConversationDynamics {
   turn_taking?: {
     total_turns?: number;
     average_turn_duration?: number;
-    turn_distribution?: Record<string, number>;
+    turn_distribution?: { [speakerId: string]: number };
   };
   engagement_score?: number;
   participation_balance?: number;
@@ -69,7 +73,7 @@ export interface ConversationDynamics {
   overlap_time?: number;
   overlap_percentage?: number;
   pace?: {
-    words_per_minute?: Record<string, number>;
+    words_per_minute?: { [speakerId: string]: number };
     overall_words_per_minute?: number;
   };
 }
@@ -89,7 +93,13 @@ export interface ConversationResults {
   };
   transcription?: {
     full_transcript?: string;
-    by_speaker?: Record<string, Array<{ text: string; start_time: number; end_time: number }>>;
+    by_speaker?: {
+      [speakerId: string]: Array<{
+        text: string;
+        start_time: number;
+        end_time: number;
+      }>;
+    };
   };
 }
 
@@ -102,7 +112,7 @@ export interface StreamingEvent {
   event_type: string;
   timestamp: number;
   speaker_id?: number;
-  data?: Record<string, any>;
+  data?: any;
 }
 
 export interface StreamingConversationResponse {
