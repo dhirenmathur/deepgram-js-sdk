@@ -50,12 +50,12 @@ export { createClient, DeepgramClient, Deepgram };
  */
 export * from "./packages";
 export * from "./lib/types";
+export * from "./lib/types/ConversationAnalyticsSchema";
+export * from "./lib/types/ConversationAnalyticsResponse";
 export * from "./lib/enums";
 export * from "./lib/constants";
 export * from "./lib/errors";
 export * from "./lib/helpers";
-export * from "./packages/ConversationAnalyticsRestClient";
-export * from "./lib/types/ConversationAnalyticsSchema";
 
 /**
  * Captions. These will be tree-shaken if unused.
