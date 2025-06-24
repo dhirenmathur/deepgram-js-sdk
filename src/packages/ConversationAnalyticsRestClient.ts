@@ -1,24 +1,24 @@
-// src/packages/ConversationAnalyticsRestClient.ts
-
 import { AbstractRestClient } from "./AbstractRestClient";
-import {
+import type {
   ConversationRequestUrl,
   ConversationRequestFile,
+  ConversationAnalysisOptions,
+} from "../lib/types/ConversationAnalyticsSchema";
+import type {
   ConversationResponse,
   StreamingConversationResponse,
-} from "../lib/types/ConversationAnalyticsSchema";
-import { DeepgramResponse } from "../lib/types/DeepgramResponse";
+} from "../lib/types/ConversationAnalyticsResponse";
 
 export class ConversationAnalyticsRestClient extends AbstractRestClient {
-  public namespace = "conversation_analytics";
+  public namespace = "conversation-analytics";
 
   /**
-   * Analyze an ongoing or recorded conversation (JSON or audio file).
+   * Analyze a conversation (URL or file).
    */
   async analyzeConversation(
     source: ConversationRequestUrl | ConversationRequestFile,
-    options?: Record<string, any>
-  ): Promise<DeepgramResponse<ConversationResponse>> {
+    options?: ConversationAnalysisOptions
+  ): Promise<ConversationResponse> {
     let endpoint = "/v1/analyze/conversation";
     let body: any;
     let headers: Record<string, string> = {};
@@ -31,9 +31,9 @@ export class ConversationAnalyticsRestClient extends AbstractRestClient {
       headers["Content-Type"] = "audio/*";
     }
 
-    const requestUrl = this.getRequestUrl(endpoint, {}, options || {});
-    const result: ConversationResponse = await this.post(requestUrl, body, { headers }).then((r) => r.json());
-    return { result, error: null };
+    const url = this.getRequestUrl(endpoint, {}, options ?? {});
+    const resp = await this.post(url, body, { headers });
+    return resp.json();
   }
 
   /**
@@ -41,13 +41,14 @@ export class ConversationAnalyticsRestClient extends AbstractRestClient {
    */
   async streamConversationAnalysis(
     audioChunk: ArrayBuffer | Buffer | Blob,
-    options?: Record<string, any>
-  ): Promise<DeepgramResponse<StreamingConversationResponse>> {
+    options?: ConversationAnalysisOptions
+  ): Promise<StreamingConversationResponse> {
     const endpoint = "/v1/analyze/conversation/stream";
-    const headers = { "Content-Type": "audio/*" };
-    const requestUrl = this.getRequestUrl(endpoint, {}, options || {});
-    const result: StreamingConversationResponse = await this.post(requestUrl, audioChunk, { headers }).then((r) => r.json());
-    return { result, error: null };
+    const url = this.getRequestUrl(endpoint, {}, options ?? {});
+    const resp = await this.post(url, audioChunk, {
+      headers: { "Content-Type": "audio/*" },
+    });
+    return resp.json();
   }
 
   /**
@@ -55,10 +56,10 @@ export class ConversationAnalyticsRestClient extends AbstractRestClient {
    */
   async getConversationAnalysis(
     conversation_id: string
-  ): Promise<DeepgramResponse<ConversationResponse>> {
+  ): Promise<ConversationResponse> {
     const endpoint = `/v1/analyze/conversation/${conversation_id}`;
-    const requestUrl = this.getRequestUrl(endpoint);
-    const result: ConversationResponse = await this.get(requestUrl).then((r) => r.json());
-    return { result, error: null };
+    const url = this.getRequestUrl(endpoint);
+    const resp = await this.get(url);
+    return resp.json();
   }
 }
