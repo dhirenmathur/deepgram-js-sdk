@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MyBookings Example</title>
+  <style>
+    .cancelled { color: red; }
+    .confirmed { color: green; }
+    .confirmation { margin-top: 10px; color: blue; }
+  </style>
+</head>
+<body>
+  <h1>My Bookings</h1>
+  <ul id="bookings-list"></ul>
+  <div id="confirmation" class="confirmation"></div>
+
+  <script type="module">
+    // Simulated import
+    class BookingManager {
+      constructor() {
+        this.bookings = [];
+      }
+      addBooking(booking) { this.bookings.push(booking); }
+      getBookingsForUser(userId) { return this.bookings.filter(b => b.userId === userId); }
+      cancelBooking(userId, bookingId) {
+        const booking = this.bookings.find(b => b.id === bookingId && b.userId === userId);
+        if (booking && booking.status !== 'cancelled') {
+          booking.status = 'cancelled';
+          return true;
+        }
+        return false;
+      }
+    }
+
+    // Setup demo data
+    const manager = new BookingManager();
+    const userId = "user-123";
+    manager.addBooking({
+      id: "b1", userId, flightNumber: "DG100", departure: "NYC", arrival: "LAX", date: "2024-07-01", status: "confirmed"
+    });
+    manager.addBooking({
+      id: "b2", userId, flightNumber: "DG200", departure: "SFO", arrival: "SEA", date: "2024-07-05", status: "confirmed"
+    });
+
+    function renderBookings() {
+      const bookings = manager.getBookingsForUser(userId);
+      const list = document.getElementById('bookings-list');
+      list.innerHTML = '';
+      bookings.forEach(b => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="${b.status}">[${b.status}]</span>
+          Flight ${b.flightNumber} from ${b.departure} to ${b.arrival} on ${b.date}
+          ${b.status === 'confirmed' ? `<button data-id="${b.id}">Cancel</button>` : ''}
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('bookings-list').addEventListener('click', function(e) {
+      if (e.target.tagName === 'BUTTON') {
+        const bookingId = e.target.getAttribute('data-id');
+        if (manager.cancelBooking(userId, bookingId)) {
+          document.getElementById('confirmation').textContent = 'Your booking has been cancelled.';
+          renderBookings();
+        }
+      }
+    });
+
+    renderBookings();
+  </script>
+</body>
+</html>
