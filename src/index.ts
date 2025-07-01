@@ -54,6 +54,7 @@ export * from "./lib/enums";
 export * from "./lib/constants";
 export * from "./lib/errors";
 export * from "./lib/helpers";
+export { BookingRestClient } from "./packages/BookingRestClient";
 
 /**
  * Captions. These will be tree-shaken if unused.
