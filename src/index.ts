@@ -66,3 +66,5 @@ export * from "./lib/helpers";
  * tree-shaking.
  */
 export { webvtt, srt } from "@deepgram/captions";
+
+export { ConversationAnalyticsRestClient } from "./packages/ConversationAnalyticsRestClient";
