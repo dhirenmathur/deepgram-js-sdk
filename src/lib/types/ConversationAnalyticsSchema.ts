@@ -4,7 +4,7 @@ export interface ConversationRequestUrl {
   url: string;
 }
 
-export type ConversationRequestFile = Blob | ArrayBuffer | Buffer | Uint8Array;
+export type ConversationRequestFile = ArrayBuffer | Blob | Buffer; // For Node/browser compatibility
 
 export interface ConversationMetadata {
   request_id: string;
@@ -14,8 +14,6 @@ export interface ConversationMetadata {
   channels: number;
   num_speakers: number;
   language: string;
-  models?: string[];
-  model_info?: Record<string, { name: string; version: string }>;
 }
 
 export interface SpeakerAnalysis {
@@ -95,10 +93,11 @@ export interface ConversationResults {
   };
   transcription?: {
     full_transcript?: string;
-    by_speaker?: Record<
-      string,
-      Array<{ text: string; start_time: number; end_time: number }>
-    >;
+    by_speaker?: Record<string, Array<{
+      text: string;
+      start_time: number;
+      end_time: number;
+    }>>;
   };
 }
 
@@ -108,15 +107,7 @@ export interface ConversationResponse {
 }
 
 export interface StreamingEvent {
-  event_type:
-    | "speaker_change"
-    | "action_item"
-    | "question"
-    | "interruption"
-    | "sentiment_change"
-    | "key_phrase"
-    | "silence"
-    | "metrics_update";
+  event_type: string;
   timestamp: number;
   speaker_id?: number;
   data?: Record<string, any>;
@@ -125,29 +116,4 @@ export interface StreamingEvent {
 export interface StreamingConversationResponse {
   conversation_id: string;
   event: StreamingEvent;
-}
-
-export interface ConversationAnalysisParams {
-  callback?: string;
-  callback_method?: "POST" | "PUT";
-  detect_speakers?: boolean;
-  min_speakers?: number;
-  max_speakers?: number;
-  detect_interruptions?: boolean;
-  extract_action_items?: boolean;
-  measure_engagement?: boolean;
-  detect_sentiment?: boolean;
-  conversation_summary?: boolean;
-  speaker_labels?: string[];
-  include_transcription?: boolean;
-  customer_speaker_id?: number;
-  agent_speaker_id?: number;
-  detect_questions?: boolean;
-  detect_key_phrases?: boolean;
-  silence_threshold?: number;
-  realtime_metrics_interval?: number;
-  language?: string;
-  encoding?: string;
-  sample_rate?: number;
-  channels?: number;
 }
