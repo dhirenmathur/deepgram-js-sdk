@@ -49,9 +49,8 @@ export { createClient, DeepgramClient, Deepgram };
  * Helpful exports.
  */
 export * from "./packages";
+export * from "./packages/ConversationAnalyticsRestClient";
 export * from "./lib/types";
-export * from "./lib/types/ConversationAnalyticsSchema";
-export * from "./lib/types/ConversationAnalyticsResponse";
 export * from "./lib/enums";
 export * from "./lib/constants";
 export * from "./lib/errors";
