@@ -1,5 +1,4 @@
-// ConversationAnalyticsResponse.ts
-
+// VS OpenAPI 'ConversationResponse', includes metadata and analytics results
 export interface ConversationMetadata {
   request_id: string;
   conversation_id: string;
@@ -8,6 +7,8 @@ export interface ConversationMetadata {
   channels: number;
   num_speakers: number;
   language: string;
+  models?: string[];
+  model_info?: Record<string, { name: string; version: string }>;
 }
 
 export interface SpeakerAnalysis {
@@ -15,22 +16,12 @@ export interface SpeakerAnalysis {
   speaker_label?: string;
   talk_time?: number;
   talk_percentage?: number;
-  interruptions?: {
-    initiated?: number;
-    received?: number;
-  };
-  questions?: {
-    asked?: number;
-    answered?: number;
-  };
+  interruptions?: { initiated: number; received: number };
+  questions?: { asked: number; answered: number };
   sentiment?: {
-    average?: string;
-    score?: number;
-    progression?: Array<{
-      time: number;
-      sentiment: string;
-      score: number;
-    }>;
+    average: string;
+    score: number;
+    progression: Array<{ time: number; sentiment: string; score: number }>;
   };
   longest_monologue?: number;
   average_response_time?: number;
@@ -50,64 +41,26 @@ export interface ActionItem {
   due_date?: string;
 }
 
-export interface ConversationDynamics {
-  turn_taking?: {
-    total_turns?: number;
-    average_turn_duration?: number;
-    turn_distribution?: Record<string, number>;
-  };
-  engagement_score?: number;
-  participation_balance?: number;
-  silence_analysis?: {
-    total_silence?: number;
-    silence_percentage?: number;
-    longest_silence?: number;
-    average_silence_duration?: number;
-  };
-  overlap_time?: number;
-  overlap_percentage?: number;
-  pace?: {
-    words_per_minute?: Record<string, number>;
-    overall_words_per_minute?: number;
-  };
-}
-
 export interface ConversationResults {
   speakers: SpeakerAnalysis[];
-  dynamics: ConversationDynamics;
+  dynamics: any; // further detail per OpenAPI
   action_items?: ActionItem[];
   summary?: {
-    text?: string;
+    text: string;
     key_moments?: Array<{
       timestamp: number;
       type: string;
       text: string;
-      speakers: number[];
+      speakers?: number[];
     }>;
   };
   transcription?: {
-    full_transcript?: string;
-    by_speaker?: Record<string, Array<{
-      text: string;
-      start_time: number;
-      end_time: number;
-    }>>;
+    full_transcript: string;
+    by_speaker?: Record<string, Array<{ text: string; start_time?: number; end_time?: number }>>;
   };
 }
 
 export interface ConversationResponse {
   metadata: ConversationMetadata;
   results: ConversationResults;
-}
-
-export interface StreamingEvent {
-  event_type: string;
-  timestamp: number;
-  speaker_id?: number;
-  data?: object;
-}
-
-export interface StreamingConversationResponse {
-  conversation_id: string;
-  event: StreamingEvent;
 }
