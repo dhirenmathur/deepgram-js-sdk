@@ -1,34 +1,39 @@
-import { DeepgramVersionError } from "./lib/errors";
+import { AbstractClient } from "./packages/AbstractClient";
+import { AgentLiveClient } from "./packages/AgentLiveClient";
+import { ListenClient } from "./packages/ListenClient";
+import { ManageClient } from "./packages/ManageClient";
 import {
-  AbstractClient,
-  AgentLiveClient,
-  AuthRestClient,
-  ListenClient,
-  ManageClient,
-  ReadClient,
   OnPremClient,
   SelfHostedRestClient,
   SpeakClient,
   ModelsRestClient,
+  AnalyticsClient,
 } from "./packages";
 
 /**
- * The DeepgramClient class provides access to various Deepgram API clients, including ListenClient, ManageClient, SelfHostedRestClient, ReadClient, and SpeakClient.
+ * The Deepgram Client.
  *
- * @see https://github.com/deepgram/deepgram-js-sdk
+ * An isomorphic Javascript client for interacting with the Deepgram API.
+ * @example
+ * ```typescript
+ * import { createClient } from "@deepgram/sdk";
+ *
+ * const deepgram = createClient(DEEPGRAM_API_KEY, DEEPGRAM_PROJECT_ID);
+ *
+ * const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
+ *   {
+ *     url: "https://static.deepgram.com/examples/Bueller-Life-moves-pretty-fast.wav",
+ *   },
+ *   {
+ *     model: "nova-2",
+ *     smart_format: true,
+ *   }
+ * );
+ * ```
  */
 export default class DeepgramClient extends AbstractClient {
   /**
-   * Returns a new instance of the AuthRestClient, which provides access to the Deepgram API's temporary token endpoints.
-   *
-   * @returns {AuthRestClient} A new instance of the AuthRestClient.
-   * @see https://developers.deepgram.com/reference/token-based-auth-api/grant-token
-   */
-  get auth(): AuthRestClient {
-    return new AuthRestClient(this.options);
-  }
-  /**
-   * Returns a new instance of the ListenClient, which provides access to the Deepgram API's listening functionality.
+   * Returns a new instance of the ListenClient, which provides access to the Deepgram's transcription API.
    *
    * @returns {ListenClient} A new instance of the ListenClient.
    */
@@ -37,7 +42,7 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
-   * Returns a new instance of the ManageClient, which provides access to the Deepgram API's management functionality.
+   * Returns a new instance of the ManageClient, which provides access to the Deepgram's management API.
    *
    * @returns {ManageClient} A new instance of the ManageClient.
    */
@@ -46,44 +51,27 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
-   * Returns a new instance of the ModelsRestClient, which provides access to the Deepgram API's model functionality.
+   * Returns a new instance of the OnPremClient, which provides access to the Deepgram's on-premises API.
    *
-   * @returns {ModelsRestClient} A new instance of the ModelsRestClient.
-   */
-  get models(): ModelsRestClient {
-    return new ModelsRestClient(this.options);
-  }
-
-  /**
-   * Returns a new instance of the SelfHostedRestClient, which provides access to the Deepgram API's self-hosted functionality.
-   *
-   * @returns {OnPremClient} A new instance of the SelfHostedRestClient named as OnPremClient.
-   * @deprecated use selfhosted() instead
+   * @returns {OnPremClient} A new instance of the OnPremClient.
    */
   get onprem(): OnPremClient {
-    return this.selfhosted;
+    return new OnPremClient(this.options);
   }
 
   /**
-   * Returns a new instance of the SelfHostedRestClient, which provides access to the Deepgram API's self-hosted functionality.
+   * Returns a new instance of the OnPremClient, which provides access to the Deepgram's on-premises API.
    *
-   * @returns {SelfHostedRestClient} A new instance of the SelfHostedRestClient.
+   * Alias for the `onprem` property.
+   *
+   * @returns {OnPremClient} A new instance of the OnPremClient.
    */
   get selfhosted(): SelfHostedRestClient {
     return new SelfHostedRestClient(this.options);
   }
 
   /**
-   * Returns a new instance of the ReadClient, which provides access to the Deepgram API's reading functionality.
-   *
-   * @returns {ReadClient} A new instance of the ReadClient.
-   */
-  get read(): ReadClient {
-    return new ReadClient(this.options);
-  }
-
-  /**
-   * Returns a new instance of the SpeakClient, which provides access to the Deepgram API's speaking functionality.
+   * Returns a new instance of the SpeakClient, which provides access to Deepgram's text-to-speech API.
    *
    * @returns {SpeakClient} A new instance of the SpeakClient.
    */
@@ -92,76 +80,29 @@ export default class DeepgramClient extends AbstractClient {
   }
 
   /**
+   * Returns a new instance of the AnalyticsClient, which provides access to the Deepgram API's conversation analytics functionality.
+   *
+   * @returns {AnalyticsClient} A new instance of the AnalyticsClient.
+   */
+  get analytics(): AnalyticsClient {
+    return new AnalyticsClient(this.options);
+  }
+
+  /**
    * Returns a new instance of the AgentLiveClient, which provides access to Deepgram's Voice Agent API.
    *
    * @returns {AgentLiveClient} A new instance of the AgentLiveClient.
-   * @beta
    */
-  public agent(endpoint: string = "/:version/agent/converse"): AgentLiveClient {
-    return new AgentLiveClient(this.options, endpoint);
+  get agent(): AgentLiveClient {
+    return new AgentLiveClient(this.options);
   }
 
   /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
+   * Returns a new instance of the ModelsRestClient, which provides access to the Deepgram's models API.
+   *
+   * @returns {ModelsRestClient} A new instance of the ModelsRestClient.
    */
-  get transcription(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get projects(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get keys(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get members(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get scopes(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get invitation(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get usage(): any {
-    throw new DeepgramVersionError();
-  }
-
-  /**
-   * @deprecated
-   * @see https://dpgr.am/js-v3
-   */
-  get billing(): any {
-    throw new DeepgramVersionError();
+  get models(): ModelsRestClient {
+    return new ModelsRestClient(this.options);
   }
 }
