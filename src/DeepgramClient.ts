@@ -10,6 +10,7 @@ import {
   SelfHostedRestClient,
   SpeakClient,
   ModelsRestClient,
+  ConversationClient,
 } from "./packages";
 
 /**
@@ -99,6 +100,13 @@ export default class DeepgramClient extends AbstractClient {
    */
   public agent(endpoint: string = "/:version/agent/converse"): AgentLiveClient {
     return new AgentLiveClient(this.options, endpoint);
+  }
+
+  /**
+   * Returns a new instance of the ConversationClient, which provides access to the Conversation Analytics API.
+   */
+  get conversation(): ConversationClient {
+    return new ConversationClient(this.options);
   }
 
   /**
