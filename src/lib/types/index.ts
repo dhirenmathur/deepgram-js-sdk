@@ -2,6 +2,8 @@ export * from "./AgentLiveSchema";
 export * from "./AnalyzeSchema";
 export * from "./AsyncAnalyzeResponse";
 export * from "./AsyncPrerecordedResponse";
+export * from "./ConversationAnalyticsSchema";
+export * from "./ConversationResponse";
 export * from "./CreateOnPremCredentialsSchema";
 export * from "./CreateProjectKeyResponse";
 export * from "./CreateProjectKeySchema";
