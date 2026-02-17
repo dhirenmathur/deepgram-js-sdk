@@ -43,3 +43,4 @@ export * from "./UpdateProjectMemberScopeSchema";
 export * from "./UpdateProjectSchema";
 export * from "./UtteranceEndEvent";
 export * from "./VoidResponse";
+export * from "./ConversationAnalyticsSchema";
