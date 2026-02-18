@@ -13,3 +13,4 @@ export * from "./SelfHostedRestClient";
 export * from "./SpeakClient";
 export * from "./SpeakLiveClient";
 export * from "./SpeakRestClient";
+export * from './ConversationAnalyticsRestClient';
